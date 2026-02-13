@@ -1,0 +1,223 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ReChat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <h1>ReChat.AI</h1>
+  <p>Powered by Gemini</p>
+</header>
+
+<section>
+  <div class="chat-container">
+    <div id="messages"></div>
+
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</section>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item active">
+    <span class="icon">🏠</span>
+    <span class="label">Home</span>
+  </a>
+
+  <a href="about.html" class="nav-item">
+    <span class="icon">💼</span>
+    <span class="label">About Us</span>
+  </a>
+</nav>
+
+<script src="script.js"></script>
+</body>
+</html><style>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+header h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+header p {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* CHAT SECTION */
+section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: 400px;
+  height: 70vh;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* MESSAGES */
+#messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  padding: 10px 14px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  max-width: 75%;
+  animation: fadeIn 0.3s ease;
+}
+
+.user {
+  background: #00c6ff;
+  color: black;
+  align-self: flex-end;
+}
+
+.bot {
+  background: rgba(255, 255, 255, 0.2);
+  align-self: flex-start;
+}
+
+/* INPUT AREA */
+.input-area {
+  display: flex;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  outline: none;
+  background: white;
+  color: black;
+}
+
+.input-area button {
+  margin-left: 8px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 20px;
+  background: #00c6ff;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.input-area button:hover {
+  background: #0099cc;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.nav-item {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}</style><script>async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  addMessage(message, "user");
+  input.value = "";
+
+  try {
+    const response = await fetch("https://your-backend-url/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt: message })
+    });
+
+    const data = await response.json();
+    addMessage(data.reply, "bot");
+
+  } catch (error) {
+    addMessage("Error connecting to server.", "bot");
+    console.error(error);
+  }
+}
+
+function addMessage(text, sender) {
+  const messages = document.getElementById("messages");
+  const div = document.createElement("div");
+
+  div.classList.add("message", sender);
+  div.innerText = text;
+
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}</script>
