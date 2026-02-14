@@ -1,37 +1,22 @@
-async function sendMessage() {
-  const input = document.getElementById("userInput");
-  const message = input.value.trim();
-
-  if (!message) return;
-
-  addMessage(message, "user"); // Show user message immediately
-  input.value = "";
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
   try {
-    const response = await fetch("/api/chat", {  // CALL BACKEND
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: message }) // Send the message key
-    });
+    const { message } = req.body;
 
-    const data = await response.json();
-    addMessage(data.reply, "bot"); // Show bot reply
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+
+    // Simple test response — replace with Gemini API later
+    const reply = `You said: ${message}`;
+
+    return res.status(200).json({ reply });
 
   } catch (error) {
-    addMessage("Error connecting to server.", "bot");
-    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
   }
-}
-
-function addMessage(text, sender) {
-  const messages = document.getElementById("messages");
-  const div = document.createElement("div");
-
-  div.classList.add("message", sender);
-  div.innerText = text;
-
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
 }
